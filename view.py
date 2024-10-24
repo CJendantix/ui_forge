@@ -9,7 +9,6 @@ class Actions():
     Scroll_Down = 1
     Scroll_Up = 2
     Action = 3
-    Quit = 4
 
 def generate_item_display(item: (str, dict), selected: bool = False) -> str:
     key, data = item
@@ -18,18 +17,18 @@ def generate_item_display(item: (str, dict), selected: bool = False) -> str:
     item_display = ""
     
     if selected:
-        if functionality == "run_function":
+        if functionality == "run_function" or functionality == "option":
             item_display = f" > {key}"
-        elif functionality == "edit":
+        elif functionality == "edit" or functionality == "select":
             item_display = f" > {key}: {data["value"]}"
         
         if description := data.get("description"):
             item_display += f" - {description}"
         
     else:
-        if functionality == "run_function":
+        if functionality == "run_function" or functionality == "option":
             item_display = f"  {key}"
-        elif functionality == "edit":
+        elif functionality == "edit" or functionality == "select":
             item_display = f"  {key}: {data["value"]}"
         
         if data.get("always_show_description"):
@@ -79,14 +78,12 @@ def process_command(command: int, keymap: dict = DefaultKeymaps.View) -> int:
         return Actions.Scroll_Up
     elif command in keymap["action"]:
         return Actions.Action
-    elif command in keymap["quit"]:
-        return Actions.Quit
     else:
         return Actions.Pass
         
-def dict_view(base_panel: cpanel.panel, top_left: (int, int), dictionary: IndexedDict) -> (str, dict):
+def dict_select(base_panel: cpanel.panel, top_left: (int, int), dictionary: IndexedDict) -> (str, dict):
     base_dimensions = base_panel.window().getmaxyx()
-    bottom_right = (base_dimensions[0] - top_left[0] - 1, base_dimensions[1] - top_left[1])
+    bottom_right = (base_dimensions[0] + top_left[0], base_dimensions[1] + top_left[1])
     
     pad = curses.newpad(len(dictionary), base_dimensions[1])
     pad.keypad(True)

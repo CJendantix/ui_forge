@@ -7,12 +7,10 @@ class IndexedDict(collections.OrderedDict):
 
 class SpecialKeys():
     Enter = 10
-    Quit = ord('q')
 
 class DefaultKeymaps():
     View = {
         "up": [curses.KEY_UP],
         "down": [curses.KEY_DOWN],
-        "quit": [SpecialKeys.Quit],
         "action": [SpecialKeys.Enter]
     }
