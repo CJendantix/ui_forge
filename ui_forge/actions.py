@@ -6,7 +6,14 @@ from .selector import dict_select
 
 
 def run_function(item: dict):
-    item["function"](*item["args"], **item["kwargs"])
+    args = item.get("args")
+    kwargs = item.get("kwargs")
+    if args is None:
+        args = {"value": ()}
+    if kwargs is None:
+        kwargs = {}
+    args = args["value"]
+    item["function"]["value"](*args, **kwargs)
 
 
 def select(
@@ -30,8 +37,8 @@ def edit(base_win: curses.window, item: tuple[str, dict]) -> str:
 
     edit_win = curses.newwin(*dimensions, *top_right)
     header = f"Editing {item[0]}"
-    if allowed_human_readable := item[1]["allowed_human_readable"]:
-        header += f". {allowed_human_readable}"
+    if allowed_human_readable := item[1].get("allowed_human_readable"):
+        header += f". {allowed_human_readable["value"]}"
 
     edit_win.addstr(0, 0, header)
     edit_win.addstr(2, 0, " > ")
@@ -44,10 +51,10 @@ def edit(base_win: curses.window, item: tuple[str, dict]) -> str:
 
     while True:
         textpad_win.clear()
-        textpad_win.addstr(0, 0, item[1]["value"])
+        textpad_win.addstr(0, 0, item[1]["value"]["value"])
         textpad_win.refresh()
 
         value = textbox.edit().strip()
-        if item[1]["validator"](value):
+        if item[1]["validator"]["value"](value):
             curses.curs_set(0)
             return value

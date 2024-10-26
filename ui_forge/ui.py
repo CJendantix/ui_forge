@@ -30,18 +30,20 @@ def dict_ui(
         )
         functionality = item[1]["functionality"]
 
-        if functionality == "quit":
-            break
-        elif functionality == "run_function":
+        if functionality == "run_function":
             run_function(item[1])
         elif functionality == "select":
-            dictionary[item[0]]["value"] = select(
+            dictionary[item[0]]["value"]["value"] = select(
                 base_window, item[1]["options"], item_display
             )
         elif functionality == "edit":
-            dictionary[item[0]]["value"] = edit(base_window, item)
+            dictionary[item[0]]["value"]["value"] = edit(base_window, item)
         elif functionality == "sub_menu":
             dict_ui(base_window, item[1]["menu"])
+        
+        if exit_after_select := item[1].get("exit_after_action"):
+            if exit_after_select["value"]:
+                break
 
     base_panel.hide()
 
@@ -72,9 +74,9 @@ def editor_ui(
         (
             name,
             {
-                "value": value,
-                "validator": validator,
-                "allowed_human_readable": allowed_human_readable,
+                "value": {"value": value},
+                "validator": {"value": validator},
+                "allowed_human_readable": {"value": allowed_human_readable},
             },
         ),
     )
