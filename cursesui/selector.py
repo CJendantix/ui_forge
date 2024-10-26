@@ -20,7 +20,7 @@ def display_dict(
     item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
 ):
     for line, (key, value) in enumerate(dictionary.items()):
-        selected = (line == selected_line)
+        selected = line == selected_line
 
         display, attribute = item_display((key, value), selected)
 
