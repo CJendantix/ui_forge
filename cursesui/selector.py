@@ -29,7 +29,7 @@ def display_dict(
     item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
 ):
     for line, (key, value) in enumerate(dictionary.items()):
-        selected = (line == selected_line)
+        selected = line == selected_line
 
         display, attribute = item_display((key, value), selected)
 
@@ -86,7 +86,7 @@ def dict_select(
     dictionary: IndexedDict,
     item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
     start_line: int = 0,
-    start_pos: int = 0
+    start_pos: int = 0,
 ) -> tuple[tuple[str, dict], tuple[int, int]]:
     base_dimensions = base_win.getmaxyx()
     top_left = base_win.getbegyx()
@@ -96,7 +96,9 @@ def dict_select(
     )
 
     # pad = curses.newpad(len(dictionary), get_max_display_length(dictionary, item_display) + 1)
-    pad = curses.newpad(len(dictionary), get_max_display_length(dictionary, item_display) + 1)
+    pad = curses.newpad(
+        len(dictionary), get_max_display_length(dictionary, item_display) + 1
+    )
     pad.keypad(True)
 
     selected_line = start_line
@@ -114,7 +116,11 @@ def dict_select(
             selected_line, pad_pos = scroll_up(selected_line, pad_pos)
         elif action == Actions.Scroll_Down:
             selected_line, pad_pos = scroll_down(
-                selected_line, pad_pos, len(dictionary), top_left[0], bottom_right[0] + 1
+                selected_line,
+                pad_pos,
+                len(dictionary),
+                top_left[0],
+                bottom_right[0] + 1,
             )
         elif action == Actions.Action:
             pad.clear()
