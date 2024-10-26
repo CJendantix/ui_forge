@@ -50,7 +50,7 @@ def selection_ui(
 def editor_ui(
     base_window: curses.window,
     name: str,
-    value: str,
+    value: str = "",
     validator: Callable[[str], bool] = lambda x : True,
     allowed_human_readable: str = ""
 ) -> str:
