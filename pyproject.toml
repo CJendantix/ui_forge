@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "curses-ui"
+name = "ui-forge"
 version = "0.1.0"
 description = "A WIP procedurally generated TUI made in NCurses using Python for CCSM"
 authors = ["CJ Gilroy <cjendantix@proton.me>"]
@@ -9,6 +9,11 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 
+
+[[tool.poetry.source]]
+name = "github"
+url = "https://github.com/CJendantix/ui_forge"
+priority = "primary"
 
 [build-system]
 requires = ["poetry-core"]
