@@ -32,7 +32,7 @@ def tests(stdscr: curses.window):
     }
 
     long_dict = {
-        "exit": {"functionality": "none", "exit_after_select": {"value": True}},
+        "exit": {"functionality": "none", "exit_after_action": {"value": True}},
     }
 
     for i in range(0, 101):
