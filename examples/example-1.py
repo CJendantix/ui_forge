@@ -1,7 +1,7 @@
 import curses
 from curses import panel as cpanel
 from typing import Callable
-from ..curses_ui import dict_ui, selection_ui, editor_ui
+from ..ui_forge import dict_ui, selection_ui, editor_ui
 import re
 
 
