@@ -1,4 +1,11 @@
 # .github/workflows/ci-cd.yml
+
+name: Upload Python Package
+
+on:
+  release:
+    types: [published]
+
 jobs:
   pypi-publish:
     name: Upload release to PyPI
