@@ -17,19 +17,15 @@ def display_dict(
     pad: curses.window,
     dictionary: IndexedDict,
     selected_line: int,
-    item_display: Callable[[tuple[str, dict], bool], str],
+    item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
 ):
     for line, (key, value) in enumerate(dictionary.items()):
-        selected = False
-        attribute = curses.A_NORMAL
-        if line == selected_line:
-            selected = True
-            attribute = curses.A_BOLD
+        selected = (line == selected_line)
 
-        display = item_display((key, value), selected)
-        display = display + " " * (pad.getmaxyx()[1] - len(display) - 1)
+        display, attribute = item_display((key, value), selected)
 
         pad.addstr(line, 0, display, attribute)
+        pad.addstr(line, len(display), " " * (pad.getmaxyx()[1] - len(display) - 1))
 
 
 def scroll_down(
@@ -77,7 +73,7 @@ def process_command(command: int, keymap: dict = DefaultKeymaps.View) -> int:
 def dict_select(
     base_win: curses.window,
     dictionary: IndexedDict,
-    item_display: Callable[[tuple[str, dict], bool], str],
+    item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
 ) -> tuple[str, dict]:
     base_dimensions = base_win.getmaxyx()
     top_left = base_win.getbegyx()
