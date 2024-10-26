@@ -1,5 +1,6 @@
 import curses
 from curses import panel as cpanel
+from typing import Callable
 from cursesui import dict_ui, selection_ui, editor_ui
 import re
 
@@ -36,7 +37,20 @@ def tests(stdscr: curses.window):
             "always_show_description": True,
         },
     }
-
+    
+    long_dict: dict[str, dict[str, str | Callable]] = {
+        "quit": {"functionality": "quit"}
+    }
+    
+    for i in range(0,101):
+        long_dict[str(i)] = {
+            "functionality": "edit",
+            "description": f"long list value {i}",
+            "value": str(i),
+            "validator": testing_int_validator,
+            "allowed_human_readable": "only integers allowed",
+        }
+    
     testing_dict = {
         "quit test": {"functionality": "quit"},
         "run function test": {
@@ -66,15 +80,7 @@ def tests(stdscr: curses.window):
         },
         "sub menu test": {
             "functionality": "sub_menu",
-            "menu": {
-                "exit": {"functionality": "quit"},
-                "selection sub menu test": {
-                    "functionality": "select",
-                    "description": "description",
-                    "value": "a",
-                    "options": selection_dict,
-                },
-            },
+            "menu": long_dict
         },
     }
 
@@ -91,7 +97,7 @@ def tests(stdscr: curses.window):
     stdscr.getch()
     top_left = (0, 0)
     dict_ui_win = curses.newwin(
-        curses.LINES - top_left[0], curses.COLS - top_left[1], *top_left
+        curses.LINES - top_left[0] - 1, curses.COLS - top_left[1], *top_left
     )
     testing_dict["run function test"]["args"][
         0
@@ -134,10 +140,10 @@ def tests(stdscr: curses.window):
     rectangle(rectangle_win, 4, 4, 30, 60)
     rectangle_win.refresh()
     top_left = (8, 6)
-    dict_ui_win = curses.newwin(21, 54, *top_left)
+    dict_ui_win = curses.newwin(24, 54, *top_left)
     testing_dict["run function test"]["args"][
         0
-    ] = dict_ui_win  # give function test bounds
+    ] = dict_ui_win  # give function test bounds    
     dict_ui(dict_ui_win, testing_dict)
 
     stdscr.addstr(2, 0, "This shows the selection widget." + " " * (curses.COLS - 32))

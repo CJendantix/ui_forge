@@ -13,6 +13,15 @@ class Actions:
     Action = 3
 
 
+def get_max_display_length(
+    dictionary: dict, item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]
+) -> int:
+    displays = []
+    for key, value in dictionary.items():
+        displays.append(len(item_display((key, value), True)[0]))
+    return max(displays)
+
+
 def display_dict(
     pad: curses.window,
     dictionary: IndexedDict,
@@ -20,7 +29,7 @@ def display_dict(
     item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
 ):
     for line, (key, value) in enumerate(dictionary.items()):
-        selected = line == selected_line
+        selected = (line == selected_line)
 
         display, attribute = item_display((key, value), selected)
 
@@ -32,6 +41,7 @@ def scroll_down(
     current_line: int,
     pad_pos: int,
     max_scroll: int,
+    window_top: int,
     window_bottom: int,
     offset: int = 2,
 ) -> tuple[int, int]:
@@ -39,8 +49,9 @@ def scroll_down(
         return (current_line, pad_pos)
 
     current_line += 1
+    current_screen_line = current_line + window_top - pad_pos
     if (
-        current_line - pad_pos + offset >= window_bottom
+        current_screen_line + offset >= window_bottom
         and current_line + offset < max_scroll
     ):
         pad_pos += 1
@@ -74,7 +85,9 @@ def dict_select(
     base_win: curses.window,
     dictionary: IndexedDict,
     item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
-) -> tuple[str, dict]:
+    start_line: int = 0,
+    start_pos: int = 0
+) -> tuple[tuple[str, dict], tuple[int, int]]:
     base_dimensions = base_win.getmaxyx()
     top_left = base_win.getbegyx()
     bottom_right = (
@@ -82,12 +95,12 @@ def dict_select(
         base_dimensions[1] + top_left[1],
     )
 
-    pad = curses.newpad(len(dictionary), base_dimensions[1])
+    # pad = curses.newpad(len(dictionary), get_max_display_length(dictionary, item_display) + 1)
+    pad = curses.newpad(len(dictionary), get_max_display_length(dictionary, item_display) + 1)
     pad.keypad(True)
-    panel = cpanel.new_panel(pad)
 
-    selected_line = 0
-    pad_pos = 0
+    selected_line = start_line
+    pad_pos = start_pos
 
     while True:
         display_dict(pad, dictionary, selected_line, item_display)
@@ -101,8 +114,9 @@ def dict_select(
             selected_line, pad_pos = scroll_up(selected_line, pad_pos)
         elif action == Actions.Scroll_Down:
             selected_line, pad_pos = scroll_down(
-                selected_line, pad_pos, len(dictionary), bottom_right[0] + 1
+                selected_line, pad_pos, len(dictionary), top_left[0], bottom_right[0] + 1
             )
         elif action == Actions.Action:
-            panel.hide()
-            return dictionary.from_index(selected_line)
+            pad.clear()
+            pad.refresh(pad_pos, 0, *top_left, *bottom_right)
+            return (dictionary.from_index(selected_line), (selected_line, pad_pos))

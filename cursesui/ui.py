@@ -12,6 +12,8 @@ def dict_ui(
     item_display: Callable[
         [tuple[str, dict], bool], tuple[str, int]
     ] = default_item_display,
+    start_line: int = 0,
+    start_pos: int = 0,
 ):
     base_panel = cpanel.new_panel(base_window)
 
@@ -19,7 +21,13 @@ def dict_ui(
         base_window.clear()
         base_window.refresh()
 
-        item = dict_select(base_window, IndexedDict(dictionary), item_display)
+        item, (start_line, start_pos) = dict_select(
+            base_window,
+            IndexedDict(dictionary),
+            item_display,
+            start_line=start_line,
+            start_pos=start_pos,
+        )
         functionality = item[1]["functionality"]
 
         if functionality == "quit":

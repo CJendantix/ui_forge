@@ -16,7 +16,7 @@ def select(
 ) -> str:
     base_win.clear()
     base_win.refresh()
-    return dict_select(base_win, IndexedDict(options), item_display)[0]
+    return dict_select(base_win, IndexedDict(options), item_display)[0][0]
 
 
 def edit(base_win: curses.window, item: tuple[str, dict]) -> str:
