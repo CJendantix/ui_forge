@@ -8,10 +8,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-windows-curses = [
-    {platform = "win32", url = "https://files.pythonhosted.org/packages/07/fc/5faaef1ec5921953cc7c87ff60a5af751769cb996caab828ceb21f13ee95/windows_curses-2.4.0-cp312-cp312-win_amd64.whl"}
-]
 
+[tool.poetry.extras]
+windows-compat = ["windows-curses"]
 
 [[tool.poetry.source]]
 name = "github"
