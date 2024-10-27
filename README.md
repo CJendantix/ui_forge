@@ -6,7 +6,7 @@ An easy-to-use procedurally-generated widget system for curses in Python.
 item format is the main format used by the majority of widgets in this system.
 
 ### definitions
-An "arg," from here on out, is a key-value pair, from within a dictionary, that is itself a value of a key-value pair from within the dictionary passed to `dict_ui`
+An "arg," from here on out, is a key-value pair, from within a dictionary, that is itself a value of a dictionary in item format
 
 A sub arg is an arg that is only passed with a certain functionality
 
