@@ -91,6 +91,7 @@ def tests(stdscr: curses.window):
     )
     dict_ui(dict_ui_win, testing_dict)
 
+    stdscr.touchwin()
     stdscr.addstr(
         0, 0, "This shows the selection widget, fullscreen. Press any key to continue"
     )
@@ -101,6 +102,7 @@ def tests(stdscr: curses.window):
     )
     selection_ui(selection_ui_win, selection_dict)
 
+    stdscr.touchwin()
     stdscr.addstr(
         0, 0, "This shows the editor widget, fullscreen. Press any key to continue"
     )
@@ -111,6 +113,7 @@ def tests(stdscr: curses.window):
     )
     editor_ui(editor_ui_win, "test value", "Hello World")
 
+    stdscr.touchwin()
     stdscr.addstr(
         0, 0, "The next few tests will not be fullscreen." + " " * (curses.COLS - 42)
     )
