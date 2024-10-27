@@ -9,6 +9,7 @@ item format is the main format used by the majority of widgets in this system.
 An "arg," from here on out, is a key-value pair, from within a dictionary, that is itself a value of a dictionary in item format
 
 A sub arg is an arg that is only passed with a certain functionality
+sub args are required unless otherwise specified
 
 #### global args
 These arguments will be on *every* item listed here, optionally unless otherwise specified.
@@ -21,7 +22,7 @@ These arguments will be on *every* item listed here, optionally unless otherwise
 Arguments:
 - `base_window: curses.window` - a curses window
 - `dictionary: dict[str, dict]` - a dictionary with values of dicts in item format. This is what the UI is generated from.
-- `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` - an optional keyword argument that allows users to overwrite the way items are listed
+- `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` *optional* - an argument that allows users to overwrite the way items are listed
 
 #### functionalities
 - `none`
@@ -31,15 +32,15 @@ Arguments:
     
     Sub Args:
     - `function: Callable[[Unknown], None]` - a reference to the function to run
-    - `args: list` - a list of positional arguments to pass to the function
-    - `kwargs: dict[str, Unknown]` - a dictionary of keyword arguments to pass to the function
+    - `args: list` *optional* - a list of positional arguments to pass to the function
+    - `kwargs: dict[str, Unknown]` *optional* - a dictionary of keyword arguments to pass to the function
 - `edit`
     Opens the editor widget
     
     Sub Args:
     - `value: str` - the value assigned before editing - this gets overwritten after a successful edit
-    - `validator: Callable[[str], bool]` - a reference to a function. The input is the entire submitted string, and the output will determine whether or not it will get accepted. If it does not get accepted, the input box will be reset to the previous value, and the user will be prompted to input again. This will repeat until the uset inputs a valid value.
-    - `allowed_human_readable: str` - a string that gets printed after the name of the value the user is editing. This is intended to instruct users in an understandable fashion what values are valid or invalid.
+    - `validator: Callable[[str], bool]` *optional* - a reference to a function. The input is the entire submitted string, and the output will determine whether or not it will get accepted. If it does not get accepted, the input box will be reset to the previous value, and the user will be prompted to input again. This will repeat until the uset inputs a valid value.
+    - `allowed_human_readable: str` *optional* - a string that gets printed after the name of the value the user is editing. This is intended to instruct users in an understandable fashion what values are valid or invalid.
 - `select`
     Opens the selection widget
 
@@ -52,18 +53,17 @@ Arguments:
     A new instance of `dict_ui` with the input menu dictionary
 
     Sub Args:
-    - `menu: dict`
-        a menu dictionary
+    - `menu: dict` - a menu dictionary
 
 ## selection_ui
 Arguments:
 - `base_window: curses.window` - a curses window
 - `options: dict[str, dict]` - a dictionary containing dictionaries in item format with the `option` functionality
-- `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` - an optional keyword argument that allows users to overwrite the way items are listed
+- `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` *optional* - an argument that allows users to overwrite the way items are listed
 
 ## editor_ui
 - `base_window: curses.window` - a curses window
 - `name: str` - the "name" of the value being assigned, ususally analagous to the name of the variable being assigned to. This gets displayed to the user
-- `value: str` - the default value before modification
-- `validator: Callable[[str], bool]` - a reference to a function. The input is the entire submitted string, and the output will determine whether or not it will get accepted. If it does not get accepted, the input box will be reset to the previous value, and the user will be prompted to input again. This will repeat until the uset inputs a valid value.
-- `allowed_human_readable: str` - a string that gets printed after the name of the value the user is editing. This is intended to instruct users in an understandable fashion what values are valid or invalid.
+- `value: str` *optional* - the default value before modification
+- `validator: Callable[[str], bool]` *optional* - a reference to a function. The input is the entire submitted string, and the output will determine whether or not it will get accepted. If it does not get accepted, the input box will be reset to the previous value, and the user will be prompted to input again. This will repeat until the uset inputs a valid value.
+- `allowed_human_readable: str` *optional* - a string that gets printed after the name of the value the user is editing. This is intended to instruct users in an understandable fashion what values are valid or invalid.

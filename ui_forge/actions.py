@@ -54,6 +54,10 @@ def edit(base_win: curses.window, item: tuple[str, dict]) -> str:
         textpad_win.refresh()
 
         value = textbox.edit().strip()
-        if item[1]["validator"](value):
+        validator = item[1].get("validator")
+        if not validator:
+            validator = lambda x : True  # noqa: E731
+            
+        if validator(value):
             curses.curs_set(0)
             return value
