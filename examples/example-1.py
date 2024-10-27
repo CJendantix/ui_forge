@@ -87,7 +87,7 @@ def tests(stdscr: curses.window):
     stdscr.getch()
     top_left = (0, 0)
     dict_ui_win = curses.newwin(
-        curses.LINES - top_left[0] - 1, curses.COLS - top_left[1], *top_left
+        curses.LINES - top_left[0] - 1, curses.COLS - top_left[1] - 1, *top_left
     )
     dict_ui(dict_ui_win, testing_dict)
 
@@ -97,7 +97,7 @@ def tests(stdscr: curses.window):
     stdscr.getch()
     top_left = (0, 0)
     selection_ui_win = curses.newwin(
-        curses.LINES - top_left[0] - 1, curses.COLS - top_left[1], *top_left
+        curses.LINES - top_left[0] - 1, curses.COLS - top_left[1] - 1, *top_left
     )
     selection_ui(selection_ui_win, selection_dict)
 
@@ -107,7 +107,7 @@ def tests(stdscr: curses.window):
     stdscr.getch()
     top_left = (0, 0)
     editor_ui_win = curses.newwin(
-        curses.LINES - top_left[0] - 1, curses.COLS - top_left[1], *top_left
+        curses.LINES - top_left[0] - 1, curses.COLS - top_left[1] - 1, *top_left
     )
     editor_ui(editor_ui_win, "test value", "Hello World")
 
