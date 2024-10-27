@@ -5,13 +5,18 @@ from ui_forge import dict_ui, selection_ui, editor_ui
 import re
 
 
-def testing_function(
-    base_win: curses.window, a: str, b: str, c: str = "c", d: str = "d"
-) -> None:
-    string = f"{a} {b} {c} {d}"
-    base_win.addstr(0, 0, string)
-    base_win.getch()
-
+def testing_function(menu: dict) -> None:
+    selection_menu = menu["selection test"]["options"]
+    
+    keys = []
+    for key in selection_menu.keys():
+        keys.append(int(key))
+    selection_menu[str(max(keys) + 1)] = {
+        "functionality": "option",
+        "description": "description",
+        "always_show_description": True,
+    }
+    menu["run function test"]["description"] = f"adds an option to the selection tests ({len(selection_menu)})"
 
 def testing_int_validator(value: str) -> bool:
     return re.match(r"[-+]?\d+$", value) is not None
@@ -21,25 +26,15 @@ def tests(stdscr: curses.window):
     from curses.textpad import rectangle
 
     selection_dict = {
-        "a": {
-            "functionality": "option",
-            "description": "description",
-            "always_show_description": True,
-        },
-        "b": {
-            "functionality": "option",
-            "description": "description",
-            "always_show_description": False,
-        },
-        "c": {
+        "1": {
             "functionality": "option",
             "description": "description",
             "always_show_description": True,
         },
     }
     
-    long_dict: dict[str, dict[str, str | Callable]] = {
-        "quit": {"functionality": "quit"}
+    long_dict = {
+        "quit": {"functionality": "none", "exit_after_action": True}
     }
     
     for i in range(0,101):
@@ -52,18 +47,12 @@ def tests(stdscr: curses.window):
         }
     
     testing_dict = {
-        "quit test": {"functionality": "quit"},
+        "quit test": {"functionality": "none", "exit_after_action": True},
         "run function test": {
             "functionality": "run_function",
-            "description": "description",
+            "description": "adds an option to the selection tests (1)",
             "always_show_description": True,
             "function": testing_function,
-            "args": [
-                curses.newwin(len("a_working b_working c_working d_working"), 1, 0, 0),
-                "a_working",
-                "b_working",
-            ],
-            "kwargs": {"c": "c_working", "d": "d_working"},
         },
         "edit test": {
             "functionality": "edit",
@@ -83,6 +72,8 @@ def tests(stdscr: curses.window):
             "menu": long_dict
         },
     }
+    
+    testing_dict["run function test"]["args"] = [testing_dict]
 
     curses.curs_set(0)
     if curses.has_colors():
@@ -99,9 +90,6 @@ def tests(stdscr: curses.window):
     dict_ui_win = curses.newwin(
         curses.LINES - top_left[0] - 1, curses.COLS - top_left[1], *top_left
     )
-    testing_dict["run function test"]["args"][
-        0
-    ] = dict_ui_win  # give function test bounds
     dict_ui(dict_ui_win, testing_dict)
 
     stdscr.addstr(
@@ -110,7 +98,7 @@ def tests(stdscr: curses.window):
     stdscr.getch()
     top_left = (0, 0)
     selection_ui_win = curses.newwin(
-        curses.LINES - top_left[0], curses.COLS - top_left[1], *top_left
+        curses.LINES - top_left[0] - 1, curses.COLS - top_left[1], *top_left
     )
     selection_ui(selection_ui_win, selection_dict)
 
@@ -120,7 +108,7 @@ def tests(stdscr: curses.window):
     stdscr.getch()
     top_left = (0, 0)
     editor_ui_win = curses.newwin(
-        curses.LINES - top_left[0], curses.COLS - top_left[1], *top_left
+        curses.LINES - top_left[0] - 1, curses.COLS - top_left[1], *top_left
     )
     editor_ui(editor_ui_win, "test value", "Hello World")
 
@@ -135,27 +123,24 @@ def tests(stdscr: curses.window):
     stdscr.addstr(2, 0, "This shows the layered UI. Press Any key to continue")
     stdscr.getch()
 
-    rectangle_win = curses.newwin(32, 61, 3, 0)
+    rectangle_win = curses.newwin(32, 81, 3, 0)
     rectangle_panel = cpanel.new_panel(rectangle_win)
-    rectangle(rectangle_win, 4, 4, 30, 60)
+    rectangle(rectangle_win, 4, 4, 30, 80)
     rectangle_win.refresh()
     top_left = (8, 6)
-    dict_ui_win = curses.newwin(24, 54, *top_left)
-    testing_dict["run function test"]["args"][
-        0
-    ] = dict_ui_win  # give function test bounds    
+    dict_ui_win = curses.newwin(24, 73, *top_left)
     dict_ui(dict_ui_win, testing_dict)
 
     stdscr.addstr(2, 0, "This shows the selection widget." + " " * (curses.COLS - 32))
     stdscr.refresh()
     top_left = (8, 6)
-    selection_ui_win = curses.newwin(21, 54, *top_left)
+    selection_ui_win = curses.newwin(24, 73, *top_left)
     selection_ui(selection_ui_win, selection_dict)
 
     stdscr.addstr(2, 0, "This shows the editor widget." + " " * (curses.COLS - 29))
     stdscr.refresh()
     top_left = (8, 6)
-    editor_ui_win = curses.newwin(21, 54, *top_left)
+    editor_ui_win = curses.newwin(24, 73, *top_left)
     editor_ui(editor_ui_win, "test value", "a")
 
     rectangle_panel.hide()
