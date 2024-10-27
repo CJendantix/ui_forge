@@ -1,4 +1,5 @@
 import curses
+from curses import panel as cpanel
 from typing import Callable
 from .common import IndexedDict, DefaultKeymaps
 
@@ -94,6 +95,7 @@ def dict_select(
         base_dimensions[1] + top_left[1],
     )
 
+    # pad = curses.newpad(len(dictionary), get_max_display_length(dictionary, item_display) + 1)
     pad = curses.newpad(
         len(dictionary), get_max_display_length(dictionary, item_display) + 1
     )
