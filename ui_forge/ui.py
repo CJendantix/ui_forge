@@ -30,9 +30,7 @@ def dict_ui(
         )
         functionality = item[1]["functionality"]
 
-        if functionality == "quit":
-            break
-        elif functionality == "run_function":
+        if functionality == "run_function":
             run_function(item[1])
         elif functionality == "select":
             dictionary[item[0]]["value"] = select(
@@ -42,6 +40,10 @@ def dict_ui(
             dictionary[item[0]]["value"] = edit(base_window, item)
         elif functionality == "sub_menu":
             dict_ui(base_window, item[1]["menu"])
+            
+        if exit_after_action := item[1].get("exit_after_action"):
+            if exit_after_action:
+                break
 
     base_panel.hide()
 

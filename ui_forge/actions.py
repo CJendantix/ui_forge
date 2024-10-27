@@ -6,7 +6,13 @@ from .selector import dict_select
 
 
 def run_function(item: dict):
-    item["function"](*item["args"], **item["kwargs"])
+    args = item.get("args")
+    if not args:
+        args = ()
+    kwargs = item.get("kwargs")
+    if not kwargs:
+        kwargs = {}
+    item["function"](*args, **kwargs)
 
 
 def select(

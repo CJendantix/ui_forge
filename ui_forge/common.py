@@ -28,9 +28,9 @@ def default_item_display(item: tuple[str, dict], selected: bool) -> tuple[str, i
     attribute = curses.A_NORMAL
 
     if (
-        functionality == "run_function"
+        functionality == "none"
+        or functionality == "run_function"
         or functionality == "option"
-        or functionality == "quit"
     ):
         item_display = f"{key}"
     elif functionality == "edit" or functionality == "select":
