@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ui-forge"
-version = "1.2.1"
+version = "1.2.2"
 description = "A WIP procedurally generated TUI made in NCurses using Python for CCSM"
 authors = ["CJ Gilroy <cjendantix@proton.me>"]
 license = "Unlicense"
@@ -8,6 +8,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+windows-curses = [
+    {platform = "windows", url = "https://files.pythonhosted.org/packages/07/fc/5faaef1ec5921953cc7c87ff60a5af751769cb996caab828ceb21f13ee95/windows_curses-2.4.0-cp312-cp312-win_amd64.whl"}
+]
 
 
 [[tool.poetry.source]]
