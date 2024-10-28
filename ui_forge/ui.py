@@ -28,7 +28,7 @@ def dict_ui(
             start_line=start_line,
             start_pos=start_pos,
         )
-        functionality = item[1]["functionality"]
+        functionality = item[1].get("functionality")
 
         if functionality == "run_function":
             run_function(item[1])

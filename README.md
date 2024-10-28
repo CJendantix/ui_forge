@@ -13,7 +13,7 @@ sub args are required unless otherwise specified
 
 #### global args
 These arguments will be on *every* item listed here, optionally unless otherwise specified.
-- `functionality: str` **required** - the functionality of the item, valid values will be covered later. The program will most likely panic if this is ever not specified
+- `functionality: str` - the functionality of the item, valid values will be covered later. Invalid values will do the same as not specifying at all.
 - `description: str` - a description of the option
 - `always_show_description: bool` - whether or not to always show the description of the item, if set to `False`, the description will only be shown while the item is selected.
 - `exit_after_action` - exits the current menu after the option is selected and its functionality is performed. Can be used with the `none` functionality to implement an exit button.
@@ -25,8 +25,6 @@ Arguments:
 - `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` *optional* - an argument that allows users to overwrite the way items are listed
 
 #### functionalities
-- `none`
-    Does nothing. Will not inhibit functionality of global args.
 - `run_function`
     Runs a function with arbitrary arguments
     
@@ -35,20 +33,18 @@ Arguments:
     - `args: list` *optional* - a list of positional arguments to pass to the function
     - `kwargs: dict[str, Unknown]` *optional* - a dictionary of keyword arguments to pass to the function
 - `edit`
-    Opens the editor widget
+    Opens the editor widget. The `name` argument of the selection widget is the key of this item.
     
     Sub Args:
-    - `value: str` - the value assigned before editing - this gets overwritten after a successful edit
-    - `validator: Callable[[str], bool]` *optional* - a reference to a function. The input is the entire submitted string, and the output will determine whether or not it will get accepted. If it does not get accepted, the input box will be reset to the previous value, and the user will be prompted to input again. This will repeat until the uset inputs a valid value.
-    - `allowed_human_readable: str` *optional* - a string that gets printed after the name of the value the user is editing. This is intended to instruct users in an understandable fashion what values are valid or invalid.
+    - `value: str` - as if you were passing it directly to the selection widget, format covered below. This gets overwritten after a successful edit.
+    - `validator: Callable[[str], bool]` *optional* - as if you were passing it directly to the selection widget, format covered below.
+    - `allowed_human_readable: str` *optional* - as if you were passing it directly to the selection widget, format covered below.
 - `select`
     Opens the selection widget
 
     sub args:
-    - `value: str` - the value assigned before editing - this gets overwritten when the user selects a new value
-    - `options: dict[str, dict]` - a dictionary containing dictionaries in item format with the `option` functionality
-- `option`
-    An option in a selection menu. Only intended to be used within the selection widget. The key is the value that will be selected.
+    - `value: str` - as if you were passing it directly to the selection widget, format covered below. This gets overwritten when the user selects a new value.
+    - `options: dict[str, dict]` - as if you were passing it directly to the selection widget, format covered below.
 - `sub menu`
     A new instance of `dict_ui` with the input menu dictionary
 
@@ -58,7 +54,7 @@ Arguments:
 ## selection_ui
 Arguments:
 - `base_window: curses.window` - a curses window
-- `options: dict[str, dict]` - a dictionary containing dictionaries in item format with the `option` functionality
+- `options: dict[str, dict]` - a dictionary containing dictionaries in item format. All global args are valid, but functionality does nothing.
 - `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` *optional* - an argument that allows users to overwrite the way items are listed
 
 ## editor_ui

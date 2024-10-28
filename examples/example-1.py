@@ -1,5 +1,6 @@
 import curses
 from curses import panel as cpanel
+from typing import Callable
 from ui_forge import dict_ui, selection_ui, editor_ui
 import re
 
@@ -26,14 +27,13 @@ def tests(stdscr: curses.window):
 
     selection_dict = {
         "1": {
-            "functionality": "option",
             "description": "description",
             "always_show_description": True,
-        },
+        }
     }
     
-    long_dict = {
-        "quit": {"functionality": "none", "exit_after_action": True}
+    long_dict: dict[str, dict[str, str | Callable | bool]] = {
+        "quit": {"exit_after_action": True}
     }
     
     for i in range(0,101):
@@ -46,7 +46,7 @@ def tests(stdscr: curses.window):
         }
     
     testing_dict = {
-        "quit test": {"functionality": "none", "exit_after_action": True},
+        "quit test": {"exit_after_action": True},
         "run function test": {
             "functionality": "run_function",
             "description": "adds an option to the selection tests (1)",

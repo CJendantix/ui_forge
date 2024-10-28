@@ -31,21 +31,19 @@ def default_item_display(item: tuple[str, dict], selected: bool) -> tuple[str, i
     """
     key = item[0]
     data = item[1]
-    functionality = data["functionality"]
+    functionality = data.get("functionality")
 
     item_display = ""
     attribute = curses.A_NORMAL
 
-    if (
-        functionality == "none"
-        or functionality == "run_function"
-        or functionality == "option"
-    ):
+    if functionality == "run_function":
         item_display = f"{key}"
     elif functionality == "edit" or functionality == "select":
         item_display = f"{key}: {data["value"]}"
     elif functionality == "sub_menu":
         item_display = f"{key}: ..."
+    else:
+        item_display = f"{key}"
 
     if selected:
         item_display = " > " + item_display
