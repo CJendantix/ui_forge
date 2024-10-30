@@ -1,6 +1,7 @@
 import curses
 from curses.textpad import Textbox
 from typing import Callable
+import typing
 from .common import IndexedDict
 from .selector import dict_select
 
@@ -19,12 +20,12 @@ def select(
     base_win: curses.window,
     options: dict,
     item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
-) -> str:
+) -> typing.Any:
     base_win.clear()
     base_win.refresh()
     selection = dict_select(base_win, IndexedDict(options), item_display)[0]
     if selection[1].get('functionality') == 'option':
-        if value := selection[1].get('value'):
+        if (value := selection[1].get('value')) is not None:
             return value
     return selection[0]
 

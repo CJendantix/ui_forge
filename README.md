@@ -43,7 +43,7 @@ These arguments will be on *every* item listed here, optionally unless otherwise
     Only intended to be used with the selection widget. Provides the `value` sub arg:
 
     sub args:
-    - `value: str` - changes the returned value of the option. Useful if you want to have a different name displayed to the user than what is returned. Careful, though. In the dict ui the returned value will be displayed to the user after they select it if you don't have `display_value` set to False in the select item, or have `displayed_value` set.
+    - `value: Any` - changes the returned value of the option. Useful if you want to have a different name displayed to the user than what is returned. Careful, though. In the dict ui the returned value will be displayed to the user after they select it if you don't have `display_value` set to False in the select item, or have `displayed_value` set.
     - `displayed_value: str` *optional* - what is displayed to the user in a dict ui, rather than `value`.
 - `sub menu`
     A new instance of `dict_ui` with the input menu dictionary
