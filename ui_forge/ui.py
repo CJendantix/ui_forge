@@ -1,6 +1,5 @@
 import curses
 from typing import Callable
-from curses import panel as cpanel
 from .selector import dict_select
 from .common import IndexedDict, default_item_display
 from .actions import run_function, select, edit
@@ -15,7 +14,6 @@ def dict_ui(
     start_line: int = 0,
     start_pos: int = 0,
 ):
-    base_panel = cpanel.new_panel(base_window)
 
     while True:
         base_window.clear()
@@ -45,7 +43,8 @@ def dict_ui(
             if exit_after_action:
                 break
 
-    base_panel.hide()
+    base_window.clear()
+    base_window.refresh()
 
 
 def selection_ui(
@@ -55,9 +54,9 @@ def selection_ui(
         [tuple[str, dict], bool], tuple[str, int]
     ] = default_item_display,
 ) -> str:
-    base_panel = cpanel.new_panel(base_window)
     value = select(base_window, options, item_display)
-    base_panel.hide()
+    base_window.clear()
+    base_window.refresh()
     return value
 
 
@@ -68,7 +67,6 @@ def editor_ui(
     validator: Callable[[str], bool] = lambda x: True,
     allowed_human_readable: str = "",
 ) -> str:
-    base_panel = cpanel.new_panel(base_window)
     value = edit(
         base_window,
         (
@@ -80,5 +78,6 @@ def editor_ui(
             },
         ),
     )
-    base_panel.hide()
+    base_window.clear()
+    base_window.refresh()
     return value
