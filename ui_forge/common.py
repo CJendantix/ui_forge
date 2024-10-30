@@ -1,5 +1,6 @@
 import collections
 import curses
+from typing import Optional
 
 
 class IndexedDict(collections.OrderedDict):
@@ -12,13 +13,19 @@ class SpecialKeys:
 
 
 class DefaultKeymaps:
-    """Use this as a base to create your own keymap for the selector
-    """
+    """Use this as a base to create your own keymap for the selector"""
+
     View = {
         "up": [curses.KEY_UP],
         "down": [curses.KEY_DOWN],
         "action": [SpecialKeys.Enter],
     }
+
+
+def get_key_from_value(value: str, dictionary: dict) -> Optional[str]:
+    for key, kvalue in dictionary.items():
+        if str(value) == str(kvalue["value"]):
+            return key
 
 
 def default_item_display(item: tuple[str, dict], selected: bool) -> tuple[str, int]:
@@ -38,8 +45,20 @@ def default_item_display(item: tuple[str, dict], selected: bool) -> tuple[str, i
 
     if functionality == "run_function":
         item_display = f"{key}"
-    elif functionality == "edit" or functionality == "select":
-        item_display = f"{key}: {data["value"]}"
+    elif functionality == "edit":
+        if data.get("display_value") is False:
+            item_display = f"{key}"
+        else:
+            item_display = f"{key}: {data["value"]}"
+    elif functionality == "select":
+        if data.get("display_value") is False:
+            item_display = f"{key}"
+        elif displayed_value := data["options"][
+            get_key_from_value(data["value"], data["options"])
+        ].get("displayed_value"):
+            item_display = f"{key}: {displayed_value}"
+        else:
+            item_display = f"{key}: {data["value"]}"
     elif functionality == "sub_menu":
         item_display = f"{key}: ..."
     else:

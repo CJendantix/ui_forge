@@ -18,12 +18,6 @@ These arguments will be on *every* item listed here, optionally unless otherwise
 - `always_show_description: bool` - whether or not to always show the description of the item, if set to `False`, the description will only be shown while the item is selected.
 - `exit_after_action` - exits the current menu after the option is selected and its functionality is performed. Can be used with the `none` functionality to implement an exit button.
 
-## dict_ui
-Arguments:
-- `base_window: curses.window` - a curses window
-- `dictionary: dict[str, dict]` - a dictionary with values of dicts in item format. This is what the UI is generated from.
-- `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` *optional* - an argument that allows users to overwrite the way items are listed
-
 #### functionalities
 - `run_function`
     Runs a function with arbitrary arguments
@@ -45,16 +39,28 @@ Arguments:
     sub args:
     - `value: str` - as if you were passing it directly to the selection widget, format covered below. This gets overwritten when the user selects a new value.
     - `options: dict[str, dict]` - as if you were passing it directly to the selection widget, format covered below.
+- `option`
+    Only intended to be used with the selection widget. Provides the `value` sub arg:
+
+    sub args:
+    - `value: str` - changes the returned value of the option. Useful if you want to have a different name displayed to the user than what is returned. Careful, though. In the dict ui the returned value will be displayed to the user after they select it if you don't have `display_value` set to False in the select item, or have `displayed_value` set.
+    - `displayed_value: str` *optional* - what is displayed to the user in a dict ui, rather than `value`.
 - `sub menu`
     A new instance of `dict_ui` with the input menu dictionary
 
     Sub Args:
     - `menu: dict` - a menu dictionary
 
+## dict_ui
+Arguments:
+- `base_window: curses.window` - a curses window
+- `dictionary: dict[str, dict]` - a dictionary with values of dicts in item format. This is what the UI is generated from.
+- `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` *optional* - an argument that allows users to overwrite the way items are listed
+
 ## selection_ui
 Arguments:
 - `base_window: curses.window` - a curses window
-- `options: dict[str, dict]` - a dictionary containing dictionaries in item format. All global args are valid, but functionality does nothing.
+- `options: dict[str, dict]` - a dictionary containing dictionaries in item format. All global args are valid, and each item can optionally have the `option` functionality for some extra functionality
 - `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` *optional* - an argument that allows users to overwrite the way items are listed
 
 ## editor_ui

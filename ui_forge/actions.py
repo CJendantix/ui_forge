@@ -22,7 +22,11 @@ def select(
 ) -> str:
     base_win.clear()
     base_win.refresh()
-    return dict_select(base_win, IndexedDict(options), item_display)[0][0]
+    selection = dict_select(base_win, IndexedDict(options), item_display)[0]
+    if selection[1].get('functionality') == 'option':
+        if value := selection[1].get('value'):
+            return value
+    return selection[0]
 
 
 def edit(base_win: curses.window, item: tuple[str, dict]) -> str:

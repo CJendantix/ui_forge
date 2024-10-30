@@ -40,7 +40,7 @@ def dict_ui(
             dictionary[item[0]]["value"] = edit(base_window, item)
         elif functionality == "sub_menu":
             dict_ui(base_window, item[1]["menu"])
-            
+
         if exit_after_action := item[1].get("exit_after_action"):
             if exit_after_action:
                 break

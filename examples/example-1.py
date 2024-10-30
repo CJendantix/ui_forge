@@ -7,7 +7,7 @@ import re
 
 def testing_function(menu: dict) -> None:
     selection_menu = menu["selection test"]["options"]
-    
+
     keys = []
     for key in selection_menu.keys():
         keys.append(int(key))
@@ -15,8 +15,13 @@ def testing_function(menu: dict) -> None:
         "functionality": "option",
         "description": "description",
         "always_show_description": True,
+        "value": str(str(max(keys) + 2)),
+        "displayed_value": str(max(keys) + 1),
     }
-    menu["run function test"]["description"] = f"adds an option to the selection tests ({len(selection_menu)})"
+    menu["run function test"][
+        "description"
+    ] = f"adds an option to the selection tests ({len(selection_menu)})"
+
 
 def testing_int_validator(value: str) -> bool:
     return re.match(r"[-+]?\d+$", value) is not None
@@ -27,16 +32,19 @@ def tests(stdscr: curses.window):
 
     selection_dict = {
         "1": {
+            "functionality": "option",
             "description": "description",
             "always_show_description": True,
+            "value": "2",
+            "displayed_value": "1",
         }
     }
-    
+
     long_dict: dict[str, dict[str, str | Callable | bool]] = {
         "quit": {"exit_after_action": True}
     }
-    
-    for i in range(0,101):
+
+    for i in range(0, 101):
         long_dict[str(i)] = {
             "functionality": "edit",
             "description": f"long list value {i}",
@@ -44,7 +52,7 @@ def tests(stdscr: curses.window):
             "validator": testing_int_validator,
             "allowed_human_readable": "only integers allowed",
         }
-    
+
     testing_dict = {
         "quit test": {"exit_after_action": True},
         "run function test": {
@@ -63,15 +71,13 @@ def tests(stdscr: curses.window):
         "selection test": {
             "functionality": "select",
             "description": "description",
-            "value": "a",
+            "value": "2",
+            "display_value": True,
             "options": selection_dict,
         },
-        "sub menu test": {
-            "functionality": "sub_menu",
-            "menu": long_dict
-        },
+        "sub menu test": {"functionality": "sub_menu", "menu": long_dict},
     }
-    
+
     testing_dict["run function test"]["args"] = [testing_dict]
 
     curses.curs_set(0)
