@@ -56,12 +56,16 @@ Arguments:
 - `base_window: curses.window` - a curses window
 - `dictionary: dict[str, dict]` - a dictionary with values of dicts in item format. This is what the UI is generated from.
 - `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` *optional* - an argument that allows users to overwrite the way items are listed
+- `start_line: int` *optional* - the line to start at in the selection. Will error if out-of-bounds
+- `start_pos: int` *optional* - the amount of lines to pan down. Will error if out-of-bounds
 
 ## selection_ui
 Arguments:
 - `base_window: curses.window` - a curses window
 - `options: dict[str, dict]` - a dictionary containing dictionaries in item format. All global args are valid, and each item can optionally have the `option` functionality for some extra functionality
 - `item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]` *optional* - an argument that allows users to overwrite the way items are listed
+- `start_line: int` *optional* - the line to start at in the selection. Will error if out-of-bounds
+- `start_pos: int` *optional* - the amount of lines to pan down. Will error if out-of-bounds
 
 ## editor_ui
 - `base_window: curses.window` - a curses window

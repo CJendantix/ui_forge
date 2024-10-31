@@ -1,5 +1,5 @@
 import curses
-from typing import Callable
+from typing import Any, Callable, Tuple
 from .selector import dict_select
 from .common import IndexedDict, default_item_display
 from .actions import run_function, select, edit
@@ -9,7 +9,7 @@ def dict_ui(
     base_window: curses.window,
     dictionary: dict,
     item_display: Callable[
-        [tuple[str, dict], bool], tuple[str, int]
+        [Tuple[str, dict], bool], Tuple[str, int]
     ] = default_item_display,
     start_line: int = 0,
     start_pos: int = 0,
@@ -51,10 +51,12 @@ def selection_ui(
     base_window: curses.window,
     options: dict,
     item_display: Callable[
-        [tuple[str, dict], bool], tuple[str, int]
+        [Tuple[str, dict], bool], Tuple[str, int]
     ] = default_item_display,
-) -> str:
-    value = select(base_window, options, item_display)
+    start_line: int = 0,
+    start_pos: int = 0,
+) -> Any:
+    value = select(base_window, options, item_display, start_line, start_pos)
     base_window.clear()
     base_window.refresh()
     return value
@@ -64,7 +66,7 @@ def editor_ui(
     base_window: curses.window,
     name: str,
     value: str = "",
-    validator: Callable[[str], bool] = lambda x: True,
+    validator: Callable[[str], bool] = lambda _: True,
     allowed_human_readable: str = "",
 ) -> str:
     value = edit(

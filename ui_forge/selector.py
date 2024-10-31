@@ -1,8 +1,6 @@
 import curses
-from typing import Callable
+from typing import Callable, Tuple
 from .common import IndexedDict, DefaultKeymaps
-
-# Classes are the closest thing a Rust programmer can get to enums in Python :'(
 
 
 class Actions:
@@ -13,7 +11,7 @@ class Actions:
 
 
 def get_max_display_length(
-    dictionary: dict, item_display: Callable[[tuple[str, dict], bool], tuple[str, int]]
+    dictionary: dict, item_display: Callable[[Tuple[str, dict], bool], Tuple[str, int]]
 ) -> int:
     displays = []
     for key, value in dictionary.items():
@@ -25,7 +23,7 @@ def display_dict(
     pad: curses.window,
     dictionary: IndexedDict,
     selected_line: int,
-    item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
+    item_display: Callable[[Tuple[str, dict], bool], Tuple[str, int]],
 ):
     for line, (key, value) in enumerate(dictionary.items()):
         selected = line == selected_line
@@ -43,7 +41,7 @@ def scroll_down(
     window_top: int,
     window_bottom: int,
     offset: int = 2,
-) -> tuple[int, int]:
+) -> Tuple[int, int]:
     if current_line >= max_scroll - 1:
         return (current_line, pad_pos)
 
@@ -58,7 +56,7 @@ def scroll_down(
     return (current_line, pad_pos)
 
 
-def scroll_up(current_line: int, pad_pos: int, offset: int = 2) -> tuple[int, int]:
+def scroll_up(current_line: int, pad_pos: int, offset: int = 2) -> Tuple[int, int]:
     if current_line <= 0:
         return (current_line, pad_pos)
 
@@ -83,10 +81,10 @@ def process_command(command: int, keymap: dict = DefaultKeymaps.View) -> int:
 def dict_select(
     base_win: curses.window,
     dictionary: IndexedDict,
-    item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
+    item_display: Callable[[Tuple[str, dict], bool], Tuple[str, int]],
     start_line: int = 0,
     start_pos: int = 0,
-) -> tuple[tuple[str, dict], tuple[int, int]]:
+) -> Tuple[Tuple[str, dict], Tuple[int, int]]:
     base_dimensions = base_win.getmaxyx()
     top_left = base_win.getbegyx()
     bottom_right = (

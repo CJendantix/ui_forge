@@ -1,7 +1,6 @@
 import curses
 from curses.textpad import Textbox
-from typing import Callable
-import typing
+from typing import Any, Callable, Tuple
 from .common import IndexedDict
 from .selector import dict_select
 
@@ -19,18 +18,20 @@ def run_function(item: dict):
 def select(
     base_win: curses.window,
     options: dict,
-    item_display: Callable[[tuple[str, dict], bool], tuple[str, int]],
-) -> typing.Any:
+    item_display: Callable[[Tuple[str, dict], bool], Tuple[str, int]],
+    start_line: int = 0,
+    start_pos: int = 0,
+) -> Any:
     base_win.clear()
     base_win.refresh()
-    selection = dict_select(base_win, IndexedDict(options), item_display)[0]
-    if selection[1].get('functionality') == 'option':
-        if (value := selection[1].get('value')) is not None:
+    selection = dict_select(base_win, IndexedDict(options), item_display, start_line, start_pos)[0]
+    if selection[1].get("functionality") == "option":
+        if (value := selection[1].get("value")) is not None:
             return value
     return selection[0]
 
 
-def edit(base_win: curses.window, item: tuple[str, dict]) -> str:
+def edit(base_win: curses.window, item: Tuple[str, dict]) -> str:
     base_win.clear()
     base_win.refresh()
 
@@ -61,8 +62,8 @@ def edit(base_win: curses.window, item: tuple[str, dict]) -> str:
         value = textbox.edit().strip()
         validator = item[1].get("validator")
         if not validator:
-            validator = lambda x : True  # noqa: E731
-            
+            validator = lambda x: True  # noqa: E731
+
         if validator(value):
             curses.curs_set(0)
             return value

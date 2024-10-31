@@ -1,6 +1,6 @@
 import collections
 import curses
-from typing import Optional
+from typing import Optional, Tuple
 
 
 class IndexedDict(collections.OrderedDict):
@@ -28,7 +28,7 @@ def get_key_from_value(value: str, dictionary: dict) -> Optional[str]:
             return key
 
 
-def default_item_display(item: tuple[str, dict], selected: bool) -> tuple[str, int]:
+def default_item_display(item: Tuple[str, dict], selected: bool) -> Tuple[str, int]:
     """Use this as a base to create your own item displays.
     Args:
         item (tuple[str, dict]): The item being displayed, in item format.
