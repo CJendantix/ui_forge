@@ -95,7 +95,7 @@ def tests(stdscr: curses.window):
     dict_ui_win = curses.newwin(
         curses.LINES - top_left[0] - 1, curses.COLS - top_left[1] - 1, *top_left
     )
-    dict_ui(dict_ui_win, testing_dict)
+    dict_ui(dict_ui_win, testing_dict, start_scroll=2)
 
     stdscr.touchwin()
     stdscr.addstr(

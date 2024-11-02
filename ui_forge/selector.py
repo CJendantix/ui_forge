@@ -1,9 +1,10 @@
 import curses
 from typing import Callable, OrderedDict, Tuple
-from . import items, common
+from . import items, ui
+from enum import Enum
 
 
-class Actions:
+class Actions(Enum):
     Pass = 0
     Scroll_Down = 1
     Scroll_Up = 2
@@ -40,43 +41,46 @@ def display_dict[
 
 def scroll_down(
     current_line: int,
-    pad_pos: int,
+    scroll: int,
     max_scroll: int,
     window_top: int,
     window_bottom: int,
     offset: int = 2,
 ) -> Tuple[int, int]:
     if current_line >= max_scroll - 1:
-        return (current_line, pad_pos)
+        return (current_line, scroll)
 
     current_line += 1
-    current_screen_line = current_line + window_top - pad_pos
+    current_screen_line = current_line + window_top - scroll
     if (
         current_screen_line + offset >= window_bottom
         and current_line + offset < max_scroll
     ):
-        pad_pos += 1
+        scroll += 1
 
-    return (current_line, pad_pos)
+    return (current_line, scroll)
 
 
-def scroll_up(current_line: int, pad_pos: int, offset: int = 2) -> Tuple[int, int]:
+def scroll_up(current_line: int, scroll: int, offset: int = 2) -> Tuple[int, int]:
     if current_line <= 0:
-        return (current_line, pad_pos)
+        return (current_line, scroll)
 
-    if current_line - offset == pad_pos and current_line > offset:
-        pad_pos -= 1
+    if current_line - offset <= scroll and current_line > offset:
+        scroll -= 1
     current_line -= 1
 
-    return (current_line, pad_pos)
+    return (current_line, scroll)
 
 
-def process_command(command: int, keymap: dict = common.DefaultKeymaps.View) -> int:
-    if command in keymap["down"]:
+def process_command(
+    command: int,
+    Keymap: ui.Keymap = ui.Keymap([curses.KEY_UP], [curses.KEY_DOWN], [10]),
+) -> Actions:
+    if command in Keymap.Down:
         return Actions.Scroll_Down
-    elif command in keymap["up"]:
+    elif command in Keymap.Up:
         return Actions.Scroll_Up
-    elif command in keymap["action"]:
+    elif command in Keymap.Action:
         return Actions.Action
     else:
         return Actions.Pass
@@ -87,9 +91,9 @@ def dict_select[
 ](
     base_win: curses.window,
     dictionary: OrderedDict[str, T],
-    item_display: Callable[[Tuple[str, T], bool], Tuple[str, int]],
+    item_display: Callable[[Tuple[str, items.Item], bool], Tuple[str, int]],
     start_line: int = 0,
-    start_pos: int = 0,
+    start_scroll: int = 0,
 ) -> Tuple[Tuple[str, T], Tuple[int, int]]:
     base_dimensions = base_win.getmaxyx()
     top_left = base_win.getbegyx()
@@ -104,27 +108,27 @@ def dict_select[
     pad.keypad(True)
 
     selected_line = start_line
-    pad_pos = start_pos
+    scroll = start_scroll
 
     while True:
         display_dict(pad, dictionary, selected_line, item_display)
-        pad.refresh(pad_pos, 0, *top_left, *bottom_right)
+        pad.refresh(scroll, 0, *top_left, *bottom_right)
 
         action = process_command(pad.getch())
 
         if action == Actions.Pass:
             continue
         elif action == Actions.Scroll_Up:
-            selected_line, pad_pos = scroll_up(selected_line, pad_pos)
+            selected_line, scroll = scroll_up(selected_line, scroll)
         elif action == Actions.Scroll_Down:
-            selected_line, pad_pos = scroll_down(
+            selected_line, scroll = scroll_down(
                 selected_line,
-                pad_pos,
+                scroll,
                 len(dictionary),
                 top_left[0],
                 bottom_right[0] + 1,
             )
         elif action == Actions.Action:
             pad.clear()
-            pad.refresh(pad_pos, 0, *top_left, *bottom_right)
-            return (list(dictionary.items())[selected_line], (selected_line, pad_pos))
+            pad.refresh(scroll, 0, *top_left, *bottom_right)
+            return (list(dictionary.items())[selected_line], (selected_line, scroll))

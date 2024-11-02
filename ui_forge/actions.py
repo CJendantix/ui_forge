@@ -13,12 +13,12 @@ def select(
     options: OrderedDict[str, items.OptionItem],
     item_display: Callable[[Tuple[str, items.Item], bool], Tuple[str, int]],
     start_line: int = 0,
-    start_pos: int = 0,
+    start_scroll: int = 0,
 ) -> Any:
     base_win.clear()
     base_win.refresh()
     selection = selector.dict_select(
-        base_win, options, item_display, start_line, start_pos
+        base_win, options, item_display, start_line, start_scroll
     )[0]
     return selection[1].value
 
