@@ -1,7 +1,17 @@
 import curses
-from typing import Callable, OrderedDict, Tuple
-from . import items, ui
+from dataclasses import dataclass
+from typing import Callable, List, OrderedDict, Tuple
+from . import items
 from enum import Enum
+
+
+@dataclass
+class Keymap:
+    """Use this as a base to create your own keymap for the selector"""
+
+    Up: List[int]
+    Down: List[int]
+    Action: List[int]
 
 
 class Actions(Enum):
@@ -74,7 +84,7 @@ def scroll_up(current_line: int, scroll: int, offset: int = 2) -> Tuple[int, int
 
 def process_command(
     command: int,
-    Keymap: ui.Keymap = ui.Keymap([curses.KEY_UP], [curses.KEY_DOWN], [10]),
+    Keymap: Keymap = Keymap([curses.KEY_UP], [curses.KEY_DOWN], [10]),
 ) -> Actions:
     if command in Keymap.Down:
         return Actions.Scroll_Down

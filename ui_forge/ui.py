@@ -1,17 +1,7 @@
 from collections import OrderedDict
 import curses
-from dataclasses import dataclass
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any, Callable, Optional, Tuple
 from . import selector, actions, items
-
-
-@dataclass
-class Keymap:
-    """Use this as a base to create your own keymap for the selector"""
-
-    Up: List[int]
-    Down: List[int]
-    Action: List[int]
 
 
 def get_option_from_value(
