@@ -1,6 +1,6 @@
 import curses
-from typing import Callable, Tuple
-from .common import IndexedDict, DefaultKeymaps
+from typing import Callable, OrderedDict, Tuple
+from . import items, common
 
 
 class Actions:
@@ -10,8 +10,10 @@ class Actions:
     Action = 3
 
 
-def get_max_display_length(
-    dictionary: dict, item_display: Callable[[Tuple[str, dict], bool], Tuple[str, int]]
+def get_max_display_length[
+    T: items.Item
+](
+    dictionary: dict, item_display: Callable[[Tuple[str, T], bool], Tuple[str, int]]
 ) -> int:
     displays = []
     for key, value in dictionary.items():
@@ -19,11 +21,13 @@ def get_max_display_length(
     return max(displays)
 
 
-def display_dict(
+def display_dict[
+    T: items.Item
+](
     pad: curses.window,
-    dictionary: IndexedDict,
+    dictionary: OrderedDict[str, T],
     selected_line: int,
-    item_display: Callable[[Tuple[str, dict], bool], Tuple[str, int]],
+    item_display: Callable[[Tuple[str, T], bool], Tuple[str, int]],
 ):
     for line, (key, value) in enumerate(dictionary.items()):
         selected = line == selected_line
@@ -67,7 +71,7 @@ def scroll_up(current_line: int, pad_pos: int, offset: int = 2) -> Tuple[int, in
     return (current_line, pad_pos)
 
 
-def process_command(command: int, keymap: dict = DefaultKeymaps.View) -> int:
+def process_command(command: int, keymap: dict = common.DefaultKeymaps.View) -> int:
     if command in keymap["down"]:
         return Actions.Scroll_Down
     elif command in keymap["up"]:
@@ -78,13 +82,15 @@ def process_command(command: int, keymap: dict = DefaultKeymaps.View) -> int:
         return Actions.Pass
 
 
-def dict_select(
+def dict_select[
+    T: items.Item
+](
     base_win: curses.window,
-    dictionary: IndexedDict,
-    item_display: Callable[[Tuple[str, dict], bool], Tuple[str, int]],
+    dictionary: OrderedDict[str, T],
+    item_display: Callable[[Tuple[str, T], bool], Tuple[str, int]],
     start_line: int = 0,
     start_pos: int = 0,
-) -> Tuple[Tuple[str, dict], Tuple[int, int]]:
+) -> Tuple[Tuple[str, T], Tuple[int, int]]:
     base_dimensions = base_win.getmaxyx()
     top_left = base_win.getbegyx()
     bottom_right = (
@@ -121,4 +127,4 @@ def dict_select(
         elif action == Actions.Action:
             pad.clear()
             pad.refresh(pad_pos, 0, *top_left, *bottom_right)
-            return (dictionary.from_index(selected_line), (selected_line, pad_pos))
+            return (list(dictionary.items())[selected_line], (selected_line, pad_pos))

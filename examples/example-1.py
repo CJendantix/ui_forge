@@ -1,26 +1,31 @@
+from collections import OrderedDict
 import curses
 from curses import panel as cpanel
-from typing import Callable
-from ui_forge import dict_ui, selection_ui, editor_ui
+from typing import Dict
+from ui_forge import dict_ui, selection_ui, editor_ui, items
 import re
 
 
-def testing_function(menu: dict) -> None:
-    selection_menu = menu["selection test"]["options"]
+def testing_function(menu: Dict[str, items.Item]) -> None:
+    if not isinstance(menu["selection test"], items.SelectionItem):
+        return
+    if not isinstance(menu["run function test"], items.RunFunctionItem):
+        return
+
+    selection_menu = menu["selection test"].options
 
     keys = []
     for key in selection_menu.keys():
         keys.append(int(key))
-    selection_menu[str(max(keys) + 1)] = {
-        "functionality": "option",
-        "description": "description",
-        "always_show_description": True,
-        "value": str(str(max(keys) + 2)),
-        "displayed_value": str(max(keys) + 1),
-    }
-    menu["run function test"][
-        "description"
-    ] = f"adds an option to the selection tests ({len(selection_menu)})"
+    selection_menu[str(max(keys) + 1)] = items.OptionItem(
+        description="description",
+        always_show_description=True,
+        value=str(str(max(keys) + 2)),
+        displayed_value=str(max(keys) + 1),
+    )
+    menu["run function test"].description = (
+        f"adds an option to the selection tests ({len(selection_menu)})"
+    )
 
 
 def testing_int_validator(value: str) -> bool:
@@ -30,55 +35,50 @@ def testing_int_validator(value: str) -> bool:
 def tests(stdscr: curses.window):
     from curses.textpad import rectangle
 
-    selection_dict = {
-        "1": {
-            "functionality": "option",
-            "description": "description",
-            "always_show_description": True,
-            "value": "2",
-            "displayed_value": "1",
+    options_dict = OrderedDict(
+        {
+            "1": items.OptionItem(
+                description="description",
+                always_show_description=True,
+                value="2",
+                displayed_value="1",
+            )
         }
-    }
+    )
 
-    long_dict: dict[str, dict[str, str | Callable | bool]] = {
-        "quit": {"exit_after_action": True}
-    }
+    long_dict: OrderedDict[str, items.Item] = OrderedDict(
+        {"quit": items.Item(exit_after_action=True)}
+    )
 
     for i in range(0, 101):
-        long_dict[str(i)] = {
-            "functionality": "edit",
-            "description": f"long list value {i}",
-            "value": str(i),
-            "validator": testing_int_validator,
-            "allowed_human_readable": "only integers allowed",
-        }
+        long_dict[str(i)] = items.EditItem(
+            description=f"long list value {i}",
+            value=str(i),
+            validator=testing_int_validator,
+            allowed_human_readable="only integers allowed",
+        )
 
-    testing_dict = {
-        "quit test": {"exit_after_action": True},
-        "run function test": {
-            "functionality": "run_function",
-            "description": "adds an option to the selection tests (1)",
-            "always_show_description": True,
-            "function": testing_function,
-        },
-        "edit test": {
-            "functionality": "edit",
-            "description": "description",
-            "value": "1",
-            "validator": testing_int_validator,
-            "allowed_human_readable": "only integers allowed",
-        },
-        "selection test": {
-            "functionality": "select",
-            "description": "description",
-            "value": "2",
-            "display_value": True,
-            "options": selection_dict,
-        },
-        "sub menu test": {"functionality": "sub_menu", "menu": long_dict},
-    }
+    testing_dict = OrderedDict({
+        "quit test": items.Item(exit_after_action=True),
+        "run function test": items.RunFunctionItem(
+            description="adds an option to the selection tests (1)",
+            always_show_description=True,
+            function=testing_function,
+        ),
+        "edit test": items.EditItem(
+            description="description",
+            value="1",
+            validator=testing_int_validator,
+            allowed_human_readable="only integers allowed",
+        ),
+        "selection test": items.SelectionItem(
+            description="description", value="2", options=options_dict
+        ),
+        "sub menu test": items.SubMenuItem(menu=long_dict),
+    })
 
-    testing_dict["run function test"]["args"] = [testing_dict]
+    if isinstance(testing_dict["run function test"], items.RunFunctionItem):
+        testing_dict["run function test"].args = tuple([testing_dict])
 
     curses.curs_set(0)
     if curses.has_colors():
@@ -106,7 +106,7 @@ def tests(stdscr: curses.window):
     selection_ui_win = curses.newwin(
         curses.LINES - top_left[0] - 1, curses.COLS - top_left[1] - 1, *top_left
     )
-    selection_ui(selection_ui_win, selection_dict)
+    selection_ui(selection_ui_win, options_dict)
 
     stdscr.touchwin()
     stdscr.addstr(
@@ -143,7 +143,7 @@ def tests(stdscr: curses.window):
     stdscr.refresh()
     top_left = (8, 6)
     selection_ui_win = curses.newwin(24, 73, *top_left)
-    selection_ui(selection_ui_win, selection_dict)
+    selection_ui(selection_ui_win, options_dict)
 
     stdscr.addstr(2, 0, "This shows the editor widget." + " " * (curses.COLS - 29))
     stdscr.refresh()

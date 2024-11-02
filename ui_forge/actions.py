@@ -1,37 +1,29 @@
 import curses
 from curses.textpad import Textbox
-from typing import Any, Callable, Tuple
-from .common import IndexedDict
-from .selector import dict_select
+from typing import Any, Callable, OrderedDict, Tuple
+from . import selector, items
 
 
-def run_function(item: dict):
-    args = item.get("args")
-    if not args:
-        args = ()
-    kwargs = item.get("kwargs")
-    if not kwargs:
-        kwargs = {}
-    item["function"](*args, **kwargs)
+def run_function(item: items.RunFunctionItem):
+    item.function(*item.args, **item.kwargs)
 
 
 def select(
     base_win: curses.window,
-    options: dict,
-    item_display: Callable[[Tuple[str, dict], bool], Tuple[str, int]],
+    options: OrderedDict[str, items.OptionItem],
+    item_display: Callable[[Tuple[str, items.Item], bool], Tuple[str, int]],
     start_line: int = 0,
     start_pos: int = 0,
 ) -> Any:
     base_win.clear()
     base_win.refresh()
-    selection = dict_select(base_win, IndexedDict(options), item_display, start_line, start_pos)[0]
-    if selection[1].get("functionality") == "option":
-        if (value := selection[1].get("value")) is not None:
-            return value
-    return selection[0]
+    selection = selector.dict_select(
+        base_win, options, item_display, start_line, start_pos
+    )[0]
+    return selection[1].value
 
 
-def edit(base_win: curses.window, item: Tuple[str, dict]) -> str:
+def edit(base_win: curses.window, item: Tuple[str, items.EditItem]) -> str:
     base_win.clear()
     base_win.refresh()
 
@@ -42,7 +34,7 @@ def edit(base_win: curses.window, item: Tuple[str, dict]) -> str:
 
     edit_win = curses.newwin(*dimensions, *top_right)
     header = f"Editing {item[0]}"
-    if allowed_human_readable := item[1]["allowed_human_readable"]:
+    if allowed_human_readable := item[1].allowed_human_readable:
         header += f". {allowed_human_readable}"
 
     edit_win.addstr(0, 0, header)
@@ -56,11 +48,11 @@ def edit(base_win: curses.window, item: Tuple[str, dict]) -> str:
 
     while True:
         textpad_win.clear()
-        textpad_win.addstr(0, 0, item[1]["value"])
+        textpad_win.addstr(0, 0, item[1].value)
         textpad_win.refresh()
 
         value = textbox.edit().strip()
-        validator = item[1].get("validator")
+        validator = item[1].validator
         if not validator:
             validator = lambda x: True  # noqa: E731
 

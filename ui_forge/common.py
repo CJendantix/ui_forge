@@ -1,11 +1,6 @@
-import collections
 import curses
-from typing import Optional, Tuple
-
-
-class IndexedDict(collections.OrderedDict):
-    def from_index(self, index: int) -> tuple:
-        return list(self.items())[index]
+from typing import Any, Optional, OrderedDict, Tuple
+from . import items
 
 
 class SpecialKeys:
@@ -22,13 +17,17 @@ class DefaultKeymaps:
     }
 
 
-def get_key_from_value(value: str, dictionary: dict) -> Optional[str]:
-    for key, kvalue in dictionary.items():
-        if str(value) == str(kvalue["value"]):
-            return key
+def get_option_from_value(
+    value: Any, dictionary: OrderedDict[str, items.OptionItem]
+) -> Optional[items.OptionItem]:
+    for option in dictionary.values():
+        if str(value) == str(option.value):
+            return option
 
 
-def default_item_display(item: Tuple[str, dict], selected: bool) -> Tuple[str, int]:
+def default_item_display[
+    T: items.Item
+](item: Tuple[str, T], selected: bool) -> Tuple[str, int]:
     """Use this as a base to create your own item displays.
     Args:
         item (tuple[str, dict]): The item being displayed, in item format.
@@ -38,28 +37,25 @@ def default_item_display(item: Tuple[str, dict], selected: bool) -> Tuple[str, i
     """
     key = item[0]
     data = item[1]
-    functionality = data.get("functionality")
 
     item_display = ""
     attribute = curses.A_NORMAL
 
-    if functionality == "run_function":
+    if isinstance(data, items.RunFunctionItem):
         item_display = f"{key}"
-    elif functionality == "edit":
-        if data.get("display_value") is False:
+    elif isinstance(data, items.EditItem):
+        if not data.display_value:
             item_display = f"{key}"
         else:
-            item_display = f"{key}: {data["value"]}"
-    elif functionality == "select":
-        if data.get("display_value") is False:
+            item_display = f"{key}: {data.value}"
+    elif isinstance(data, items.SelectionItem):
+        if not data.display_value:
             item_display = f"{key}"
-        elif displayed_value := data["options"][
-            get_key_from_value(data["value"], data["options"])
-        ].get("displayed_value"):
-            item_display = f"{key}: {displayed_value}"
+        elif option := get_option_from_value(data.value, data.options):
+            item_display = f"{key}: {option.displayed_value}"
         else:
-            item_display = f"{key}: {data["value"]}"
-    elif functionality == "sub_menu":
+            item_display = f"{key}: {data.value}"
+    elif isinstance(data, items.SubMenuItem):
         item_display = f"{key}: ..."
     else:
         item_display = f"{key}"
@@ -70,9 +66,7 @@ def default_item_display(item: Tuple[str, dict], selected: bool) -> Tuple[str, i
     else:
         item_display = "  " + item_display
 
-    if (description := data.get("description")) and (
-        data.get("always_show_description") or selected
-    ):
+    if (description := data.description) and (data.always_show_description or selected):
         item_display += f" - {description}"
 
     return (item_display, attribute)
