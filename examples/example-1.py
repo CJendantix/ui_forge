@@ -55,7 +55,7 @@ def tests(stdscr: curses.window):
             description=f"long list value {i}",
             value=str(i),
             validator=testing_int_validator,
-            allowed_human_readable="only integers allowed",
+            header=f"Editing long list value {i}. Only integers allowed",
         )
 
     testing_dict = OrderedDict({
@@ -69,7 +69,7 @@ def tests(stdscr: curses.window):
             description="description",
             value="1",
             validator=testing_int_validator,
-            allowed_human_readable="only integers allowed",
+            header="Only integers allowed",
         ),
         "selection test": items.SelectionItem(
             description="description", value="2", options=options_dict
@@ -117,7 +117,7 @@ def tests(stdscr: curses.window):
     editor_ui_win = curses.newwin(
         curses.LINES - top_left[0] - 1, curses.COLS - top_left[1] - 1, *top_left
     )
-    editor_ui(editor_ui_win, "test value", "Hello World")
+    editor_ui(editor_ui_win, "test value", header="Hello World")
 
     stdscr.touchwin()
     stdscr.addstr(
@@ -149,7 +149,7 @@ def tests(stdscr: curses.window):
     stdscr.refresh()
     top_left = (8, 6)
     editor_ui_win = curses.newwin(24, 73, *top_left)
-    editor_ui(editor_ui_win, "test value", "a")
+    editor_ui(editor_ui_win, "test value")
 
     rectangle_panel.hide()
 

@@ -28,7 +28,7 @@ Represents an item that allows users to edit a value.
 **Args:**
 - `value (str)`: The current value, which will be overwritten.
 - `validator (Callable[[str], bool])`: Function to validate the user input; defaults to always accepting the value.
-- `allowed_human_readable (str)`: Explanation of valid inputs; defaults to an empty string.
+- `header (str)`: A header above what the user is editing; defaults to an empty string.
 - `display_value (bool)`: Determines if the value is shown in the main interface; defaults to True.
 
 **Args:**
@@ -125,7 +125,7 @@ Displays an editor interface for user input and returns the modified value.
 - `name (str)`: The prompt or title for the editor.
 - `value (str, optional)`: Default value to display; defaults to an empty string.
 - `validator (Callable[[str], bool], optional)`: Function to validate the input; defaults to a function that always accepts the value.
-- `allowed_human_readable (str, optional)`: Explanation of allowed input values; defaults to an empty string.
+- `header (str, optional)`: A header above what the user is editing; defaults to an empty string.
 
 **Returns:**
 - `str`: The user-modified value after validation.

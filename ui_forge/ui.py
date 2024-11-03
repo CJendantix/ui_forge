@@ -103,7 +103,7 @@ def dict_ui(
                 start_scroll=item[1].start_scroll,
             )
         elif isinstance(item[1], items.EditItem):
-            item[1].value = actions.edit(base_window, (item[0], item[1]))
+            item[1].value = actions.edit(base_window, item[1])
         elif isinstance(item[1], items.SubMenuItem):
             dict_ui(base_window, item[1].menu)
 
@@ -143,10 +143,9 @@ def selection_ui(
 
 def editor_ui(
     base_window: curses.window,
-    name: str,
     value: str = "",
     validator: Callable[[str], bool] = lambda _: True,
-    allowed_human_readable: str = "",
+    header: str = "",
 ) -> str:
     """Displays an editor interface for user input and returns the modified value.
 
@@ -155,20 +154,17 @@ def editor_ui(
         name (str): The prompt or title for the editor.
         value (str, optional): Default value to display. defaults to "".
         validator (Callable[[str], bool], optional): Function to validate the input. Defaults to a function that always returns True.
-        allowed_human_readable (str, optional): Explanation of allowed input values. Defaults to "".
+        header (str, optional): A header above what the user is editing. Defaults to "".
 
     Returns:
         str: The user-modified value after validation.
     """
     value = actions.edit(
         base_window,
-        (
-            name,
-            items.EditItem(
-                value=value,
-                validator=validator,
-                allowed_human_readable=allowed_human_readable,
-            ),
+        items.EditItem(
+            value=value,
+            validator=validator,
+            header=header,
         ),
     )
     base_window.clear()

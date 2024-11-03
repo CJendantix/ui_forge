@@ -39,13 +39,13 @@ class EditItem(Item):
     Args:
         value (str): The current value. Will be overwritten
         validator (Callable[[str], bool]): A function that takes the full string the user is attempting to input and returns whether or not to accept the value. Defaults to a function that always returns True
-        allowed_human_readable (str): A human-readable explanation for the allowed values. Defaults to ""
+        header (str): A header above what the user is editing. Defaults to ""
         display_value (bool): Whether or not to display the value in the main screen. Defaults to True
     """
 
     value: str
     validator: Callable[[str], bool] = lambda _: True
-    allowed_human_readable: str = ""
+    header: str = ""
     display_value: bool = True
 
 
