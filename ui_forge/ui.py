@@ -31,7 +31,7 @@ def default_item_display(
     item_display = ""
     attribute = curses.A_NORMAL
 
-    if isinstance(data, items.RunFunctionItem):
+    if isinstance(data, items.RunFunctionItem) or isinstance(data, items.SubMenuItem):
         item_display = f"{key}"
     elif isinstance(data, items.EditItem):
         if not data.display_value:
@@ -45,8 +45,6 @@ def default_item_display(
             item_display = f"{key}: {option.displayed_value}"
         else:
             item_display = f"{key}: {data.value}"
-    elif isinstance(data, items.SubMenuItem):
-        item_display = f"{key}: ..."
     else:
         item_display = f"{key}"
 
