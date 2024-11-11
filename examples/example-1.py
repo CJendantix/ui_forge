@@ -55,6 +55,7 @@ def tests(stdscr: curses.window):
             description=f"long list value {i}",
             value=str(i),
             validator=testing_int_validator,
+            invalid_message="That value is not an integer",
             header=f"Editing long list value {i}. Only integers allowed",
         )
 
@@ -69,6 +70,7 @@ def tests(stdscr: curses.window):
             description="description",
             value="1",
             validator=testing_int_validator,
+            invalid_message="That value is not an integer",
             header="Only integers allowed",
         ),
         "selection test": items.SelectionItem(

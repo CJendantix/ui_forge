@@ -38,13 +38,10 @@ def edit(base_win: curses.window, item: items.EditItem) -> str:
     textpad_win: curses.window
     
     if header:
-        edit_win.addstr(0, 0, header)
-        edit_win.addstr(2, 0, " > ")
         textpad_win = curses.newwin(
             1, dimensions[1] - 3, top_right[0] + 2, top_right[1] + 3
         )
     else:
-        edit_win.addstr(0, 0, " > ")
         textpad_win = curses.newwin(
             1, dimensions[1] - 3, top_right[0], top_right[1] + 3
         )
@@ -53,8 +50,17 @@ def edit(base_win: curses.window, item: items.EditItem) -> str:
     textbox = Textbox(textpad_win, insert_mode=True)
 
     while True:
+        edit_win.clear()
         textpad_win.clear()
+        
+        if header:
+            edit_win.addstr(0, 0, header)
+            edit_win.addstr(2, 0, " > ")
+        else:
+            edit_win.addstr(0, 0, " > ")
         textpad_win.addstr(0, 0, item.value)
+        
+        edit_win.refresh()
         textpad_win.refresh()
 
         value = textbox.edit().strip()
@@ -65,3 +71,13 @@ def edit(base_win: curses.window, item: items.EditItem) -> str:
         if validator(value):
             curses.curs_set(0)
             return value
+        elif item.invalid_message:
+            curses.curs_set(0)
+            textpad_win.clear()
+            edit_win.clear()
+            
+            edit_win.addstr(0,0, item.invalid_message)
+            
+            textpad_win.refresh()
+            edit_win.getch()
+            curses.curs_set(1)

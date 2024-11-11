@@ -145,6 +145,7 @@ def editor_ui(
     base_window: curses.window,
     value: str = "",
     validator: Callable[[str], bool] = lambda _: True,
+    invalid_message: str = "",
     header: str = "",
 ) -> str:
     """Displays an editor interface for user input and returns the modified value.
@@ -164,6 +165,7 @@ def editor_ui(
         items.EditItem(
             value=value,
             validator=validator,
+            invalid_message=invalid_message,
             header=header,
         ),
     )
